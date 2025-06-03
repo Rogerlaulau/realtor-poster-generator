@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Listing Poster Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .qr-code-placeholder {
+            width: 100px;
+            height: 100px;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #757575;
+            text-align: center;
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        /* Ensure the background image covers the area */
+        .bg-image-section {
+            background-size: cover;
+            background-position: center;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            box-sizing: border-box; /* Ensures padding doesn't increase width */
+        }
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto mb-6 p-4 bg-white shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Poster Customization</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="mainAddressInput" class="block text-sm font-medium text-gray-700">Main Address Line:</label>
+                <input type="text" id="mainAddressInput" class="form-control" value="932 - 1100 SHEPPARD AVENUE W">
+            </div>
+            <div>
+                <label for="subAddressInput" class="block text-sm font-medium text-gray-700">City, Province, Postal Code:</label>
+                <input type="text" id="subAddressInput" class="form-control" value="Toronto (York University Heights), Ontario M3J0H1">
+            </div>
+            <div>
+                <label for="rentInput" class="block text-sm font-medium text-gray-700">Monthly Rent (e.g., $2,300/Monthly):</label>
+                <input type="text" id="rentInput" class="form-control" value="$2,300/Monthly">
+            </div>
+            <div class="md:col-span-2">
+                <label for="propertyInfoInput" class="block text-sm font-medium text-gray-700">Property Info (key:value pairs, one per line):</label>
+                <textarea id="propertyInfoInput" class="form-control" rows="6">Type: Condo Apt
+Build Year: 0-5
+Floor: 17th
+Bedrooms: 2
+Bathrooms: 3
+MLS#: N8305544</textarea>
+            </div>
+            <div class="md:col-span-2">
+                <label for="propertyFeaturesInput" class="block text-sm font-medium text-gray-700">Property Features:</label>
+                <textarea id="propertyFeaturesInput" class="form-control" rows="8">Riverview In Uptown Markham. Over 1000 Sq.Ft. 2 Bedrooms + Den + 3 Washrooms. 9Ft. Ceiling, Wrap Around With 240 Sq.Ft. SouthEast Unobstructed View Balcony, Vinyl Flooring Thru Out. Large Walk-In Closet. Modern Kitchen With B/I Appliances, Quartz Counter Top, Centre Island. 2 Bedrooms With 3Pc Ensuite Bathroom, Double Closet. Den With Sliding Door That Can Be Used As A 3rd Bedroom. Walking Distance to Bank, Plazas, Supermarket, Restaurants, Shops, Park. Minutes To 404/407, Unionville Go, Cineplex. Building With 24Hrs Concierge, Gym, Indoor Pool, Sauna, Library, Games/Ping Pong Room, Billiards, Party Room, Lounge, Yoga Studio, Pet Spa, Car Wash, Rooftop Terrace With BBQ, Visitor Parking.</textarea>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 mt-6">Upload Background Image</h2>
+        <input type="file" id="imageUpload" accept="image/*" class="mb-4 p-2 border border-gray-300 rounded-md w-full">
+        <button id="generatePoster" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            Generate Poster PNG
+        </button>
+    </div>
+
+    <div id="posterContainer" class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <header class="p-6 sm:p-8 bg-gray-50">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800" id="posterMainAddress">932 - 1100 SHEPPARD AVENUE W</h1>
+                    <p class="text-lg text-gray-600" id="posterSubAddress">Toronto (York University Heights), Ontario M3J0H1</p>
+                </div>
+                <div class="mt-4 sm:mt-0">
+                    <span class="bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded-md">JUST LISTED</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="relative bg-image-section bg-gray-300" style="background-image: url('https://cdn.realtor.ca/listing/TS638800727233100000/reb82/highres/3/w12079673_1.jpg');" id="bgImageSection">
+            <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+
+            <div class="relative z-10 md:flex flex-col md:flex-row min-h-[350px] sm:min-h-[400px] md:min-h-[450px] lg:min-h-[500px]">
+                <div class="w-full md:w-3/5 flex flex-col justify-end p-4 sm:p-6">
+                    <div class="bg-slate-800 bg-opacity-75 p-4 sm:p-6 rounded-lg">
+                         <p class="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center" id="posterRent">$2,300/Monthly</p>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/5 flex flex-col justify-center p-4 sm:p-6 text-white">
+                    <div class="bg-gray-800 bg-opacity-70 p-4 sm:p-6 rounded-lg">
+                        <h2 class="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4 border-b border-gray-400 pb-2">PROPERTY INFO</h2>
+                        <div class="grid grid-cols-2 gap-x-3 sm:gap-x-4 gap-y-2 sm:gap-y-3 text-xs sm:text-sm text-gray-100" id="propertyInfoDisplay">
+                            <div><strong>Type:</strong></div>          <div>Condo Apt</div>
+                            <div><strong>Build Year:</strong></div>   <div>0-5</div>
+                            <div><strong>Floor:</strong></div>         <div>17th</div>
+                            <div><strong>Bedrooms:</strong></div>     <div>2</div>
+                            <div><strong>Bathrooms:</strong></div>    <div>3</div>
+                            <div><strong>MLS#:</strong></div>         <div>N8305544</div>
+                        </div>
+                        <p class="text-xs sm:text-sm text-gray-300 mt-3 sm:mt-4 text-center">BAY STREET GROUP INC. Brokerage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="p-6 sm:p-8 border-t">
+            <h2 class="text-xl font-semibold text-gray-700 mb-3">PROPERTY FEATURES</h2>
+            <p class="text-gray-600 text-sm leading-relaxed" id="propertyFeaturesDisplay">
+                Riverview In Uptown Markham. Over 1000 Sq.Ft. 2 Bedrooms + Den + 3 Washrooms. 9Ft. Ceiling, Wrap Around With 240 Sq.Ft. SouthEast Unobstructed View Balcony, Vinyl Flooring Thru Out. Large Walk-In Closet. Modern Kitchen With B/I Appliances, Quartz Counter Top, Centre Island. 2 Bedrooms With 3Pc Ensuite Bathroom, Double Closet. Den With Sliding Door That Can Be Used As A 3rd Bedroom. Walking Distance to Bank, Plazas, Supermarket, Restaurants, Shops, Park. Minutes To 404/407, Unionville Go, Cineplex. Building With 24Hrs Concierge, Gym, Indoor Pool, Sauna, Library, Games/Ping Pong Room, Billiards, Party Room, Lounge, Yoga Studio, Pet Spa, Car Wash, Rooftop Terrace With BBQ, Visitor Parking.
+            </p>
+        </section>
+
+        <footer class="p-6 sm:p-8 bg-gray-50 border-t">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-6 sm:space-y-0 sm:space-x-6">
+                <div class="flex-shrink-0">
+                    <img src="https://placehold.co/120x40/cccccc/666666?text=Broker+Logo" alt="Broker Logo" class="h-10" onerror="this.onerror=null;this.src='https://placehold.co/120x40/cccccc/666666?text=Logo';">
+                </div>
+
+                <div class="flex-grow">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center">
+                        <img src="https://64.media.tumblr.com/6afd777fcbf98b1e06e346ecbcdb0a7e/648b5f1d655f7190-6f/s400x600/c91fcc495acba17d632ceac4cf4fbcb6d4d59e7c.png" alt="Agent Photo" class="w-20 h-20 rounded-full object-cover mr-0 mb-4 sm:mr-4 sm:mb-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/666666?text=Photo';">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Kelly Jiang</h3>
+                            <p class="text-sm text-gray-600">Salesperson</p>
+                            <p class="text-xs text-gray-500">FRI.SRS.ABR.MCNE</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-sm text-gray-600 space-y-1 text-left sm:text-right">
+                    <p class="font-semibold text-lg text-gray-800">647 618 7222</p>
+                    <p>kellyjiang29@gmail.com</p>
+                    <p>http://kellyjiang.web.baystreetgroup.ca</p>
+                    <div class="flex justify-start sm:justify-end mt-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/800px-QR_code_for_mobile_English_Wikipedia.svg.png" alt="QR Code" class="w-[100px] h-[100px] rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/666666?text=QR+Error';">
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="messageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
+        <div class="bg-white p-5 rounded-lg shadow-xl w-11/12 md:max-w-md mx-auto">
+            <div class="text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Message</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500" id="modalMessage">This is a sample message.</p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="closeModalButton" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageUpload = document.getElementById('imageUpload');
+        const bgImageSection = document.getElementById('bgImageSection');
+        const generatePosterButton = document.getElementById('generatePoster');
+        const posterContainer = document.getElementById('posterContainer');
+
+        // Inputs for customization
+        const mainAddressInput = document.getElementById('mainAddressInput');
+        const subAddressInput = document.getElementById('subAddressInput');
+        const rentInput = document.getElementById('rentInput');
+        const propertyInfoInput = document.getElementById('propertyInfoInput');
+        const propertyFeaturesInput = document.getElementById('propertyFeaturesInput');
+
+        // Elements in the poster to be updated
+        const posterMainAddress = document.getElementById('posterMainAddress');
+        const posterSubAddress = document.getElementById('posterSubAddress');
+        const posterRent = document.getElementById('posterRent');
+        const propertyInfoDisplay = document.getElementById('propertyInfoDisplay');
+        const propertyFeaturesDisplay = document.getElementById('propertyFeaturesDisplay');
+
+        // Simple modal functionality (no alert() or confirm())
+        const messageModal = document.getElementById('messageModal');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+
+        function showModal(title, message, resetPage = false) {
+            if (modalTitle) modalTitle.textContent = title;
+            if (modalMessage) modalMessage.textContent = message;
+            if (messageModal) messageModal.style.display = 'flex';
+
+            if (resetPage) {
+                if (closeModalButton) {
+                    closeModalButton.onclick = function() {
+                        messageModal.style.display = 'none';
+                        location.reload(); // Reload the page
+                    };
+                }
+            } else {
+                if (closeModalButton) {
+                    closeModalButton.onclick = function() {
+                        messageModal.style.display = 'none';
+                    };
+                }
+            }
+        }
+
+        // --- Event Listeners for Live Updates ---
+
+        mainAddressInput.addEventListener('input', (event) => {
+            posterMainAddress.textContent = event.target.value;
+        });
+
+        subAddressInput.addEventListener('input', (event) => {
+            posterSubAddress.textContent = event.target.value;
+        });
+
+        rentInput.addEventListener('input', (event) => {
+            posterRent.textContent = event.target.value;
+        });
+
+        propertyFeaturesInput.addEventListener('input', (event) => {
+            propertyFeaturesDisplay.textContent = event.target.value;
+        });
+
+        propertyInfoInput.addEventListener('input', (event) => {
+            const lines = event.target.value.split('\n');
+            propertyInfoDisplay.innerHTML = ''; // Clear existing content
+
+            lines.forEach(line => {
+                const parts = line.split(':');
+                if (parts.length >= 2) {
+                    const key = parts[0].trim();
+                    const value = parts.slice(1).join(':').trim(); // Join remaining parts in case value has colons
+                    if (key && value) {
+                        const divKey = document.createElement('div');
+                        divKey.innerHTML = `<strong>${key}:</strong>`;
+                        const divValue = document.createElement('div');
+                        divValue.textContent = value;
+                        propertyInfoDisplay.appendChild(divKey);
+                        propertyInfoDisplay.appendChild(divValue);
+                    }
+                }
+            });
+        });
+
+        // Initialize display with default input values on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            posterMainAddress.textContent = mainAddressInput.value;
+            posterSubAddress.textContent = subAddressInput.value;
+            posterRent.textContent = rentInput.value;
+            propertyFeaturesDisplay.textContent = propertyFeaturesInput.value;
+
+            // Trigger input event for propertyInfoInput to parse initial content
+            const initialEvent = new Event('input', { bubbles: true });
+            propertyInfoInput.dispatchEvent(initialEvent);
+        });
+
+
+        imageUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    bgImageSection.style.backgroundImage = `url('${e.target.result}')`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        generatePosterButton.addEventListener('click', function() {
+            // Temporarily hide the upload and generate button section to ensure it's not part of the screenshot
+            const controlsSection = document.querySelector('.max-w-4xl.mx-auto.mb-6');
+            if (controlsSection) {
+                controlsSection.style.display = 'none';
+            }
+
+            html2canvas(posterContainer, {
+                scale: 2, // Increase scale for better resolution
+                useCORS: true, // This is crucial for handling external images
+                logging: true // Enable logging for debugging
+            }).then(canvas => {
+                // Restore the controls section
+                if (controlsSection) {
+                    controlsSection.style.display = 'block';
+                }
+
+                const link = document.createElement('a');
+                link.download = 'real_estate_poster.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showModal('Poster Generated!', 'Your real estate poster has been successfully generated and downloaded as a PNG image.', true); // Pass true to reset page
+            }).catch(error => {
+                // Restore the controls section even if an error occurs
+                if (controlsSection) {
+                    controlsSection.style.display = 'block';
+                }
+                console.error('oops, something went wrong!', error);
+                showModal('Error', 'Failed to generate poster. Please try again.', true); // Pass true to reset page
+            });
+        });
+    </script>
+
+</body>
+</html>
