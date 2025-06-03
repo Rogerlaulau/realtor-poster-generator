@@ -60,6 +60,11 @@
                 <label for="rentInput" class="block text-sm font-medium text-gray-700">Monthly Rent (e.g., $2,300/Monthly):</label>
                 <input type="text" id="rentInput" class="form-control" value="$2,300/Monthly">
             </div>
+            <div>
+                <label for="listingLabelInput" class="block text-sm font-medium text-gray-700">Listing Label (e.g., JUST LISTED):</label>
+                <input type="text" id="listingLabelInput" class="form-control" value="JUST LISTED">
+            </div>
+
             <div class="md:col-span-2">
                 <label for="propertyInfoInput" class="block text-sm font-medium text-gray-700">Property Info (key:value pairs, one per line):</label>
                 <textarea id="propertyInfoInput" class="form-control" rows="6">Type: Condo Apt
@@ -90,7 +95,7 @@ MLS#: N8305544</textarea>
                     <p class="text-lg text-gray-600" id="posterSubAddress">Toronto (York University Heights), Ontario M3J0H1</p>
                 </div>
                 <div class="mt-4 sm:mt-0">
-                    <span class="bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded-md">JUST LISTED</span>
+                    <span id="posterListingLabel" class="bg-red-600 text-white text-sm font-semibold px-4 py-2 rounded-md">JUST LISTED</span>
                 </div>
             </div>
         </header>
@@ -131,12 +136,12 @@ MLS#: N8305544</textarea>
         <footer class="p-6 sm:p-8 bg-gray-50 border-t">
             <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-6 sm:space-y-0 sm:space-x-6">
                 <div class="flex-shrink-0">
-                    <img src="https://placehold.co/120x40/cccccc/666666?text=Broker+Logo" alt="Broker Logo" class="h-10" onerror="this.onerror=null;this.src='https://placehold.co/120x40/cccccc/666666?text=Logo';">
+                    <img src="./logo.png" alt="Broker Logo" class="w-20 h-20 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/666666?text=Logo';">
                 </div>
 
                 <div class="flex-grow">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center">
-                        <img src="https://64.media.tumblr.com/6afd777fcbf98b1e06e346ecbcdb0a7e/648b5f1d655f7190-6f/s400x600/c91fcc495acba17d632ceac4cf4fbcb6d4d59e7c.png" alt="Agent Photo" class="w-20 h-20 rounded-full object-cover mr-0 mb-4 sm:mr-4 sm:mb-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/666666?text=Photo';">
+                        <img src="./agent-photo.jpg" alt="Agent Photo" class="w-20 h-20 rounded-full object-cover mr-0 mb-4 sm:mr-4 sm:mb-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/666666?text=Photo';">
                         <div>
                             <h3 class="text-lg font-semibold text-gray-800">Kelly Jiang</h3>
                             <p class="text-sm text-gray-600">Salesperson</p>
@@ -150,7 +155,7 @@ MLS#: N8305544</textarea>
                     <p>kellyjiang29@gmail.com</p>
                     <p>http://kellyjiang.web.baystreetgroup.ca</p>
                     <div class="flex justify-start sm:justify-end mt-2">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/800px-QR_code_for_mobile_English_Wikipedia.svg.png" alt="QR Code" class="w-[100px] h-[100px] rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/666666?text=QR+Error';">
+                        <img src="qr-code.jpg" alt="QR Code" class="w-[100px] h-[100px] rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/666666?text=QR+Error';">
                     </div>
                 </div>
             </div>
@@ -183,6 +188,7 @@ MLS#: N8305544</textarea>
         const mainAddressInput = document.getElementById('mainAddressInput');
         const subAddressInput = document.getElementById('subAddressInput');
         const rentInput = document.getElementById('rentInput');
+        const listingLabelInput = document.getElementById('listingLabelInput');
         const propertyInfoInput = document.getElementById('propertyInfoInput');
         const propertyFeaturesInput = document.getElementById('propertyFeaturesInput');
 
@@ -190,6 +196,7 @@ MLS#: N8305544</textarea>
         const posterMainAddress = document.getElementById('posterMainAddress');
         const posterSubAddress = document.getElementById('posterSubAddress');
         const posterRent = document.getElementById('posterRent');
+        const posterListingLabel = document.getElementById('posterListingLabel');
         const propertyInfoDisplay = document.getElementById('propertyInfoDisplay');
         const propertyFeaturesDisplay = document.getElementById('propertyFeaturesDisplay');
 
@@ -237,6 +244,11 @@ MLS#: N8305544</textarea>
         propertyFeaturesInput.addEventListener('input', (event) => {
             propertyFeaturesDisplay.textContent = event.target.value;
         });
+
+        listingLabelInput.addEventListener('input', (event) => {
+            posterListingLabel.textContent = event.target.value;
+        });
+
 
         propertyInfoInput.addEventListener('input', (event) => {
             const lines = event.target.value.split('\n');
