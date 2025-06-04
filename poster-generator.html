@@ -40,6 +40,18 @@
             min-height: 80px;
             resize: vertical;
         }
+
+        .agent-photo {
+                width: 120px; /* Custom size for sm screens and up */
+                height: 120px; /* Match width to keep it circular */
+        }
+
+        @media (max-width: 639.98px) { /* Corresponds to Tailwind's max-sm, affects screens smaller than sm */
+            .agent-photo {
+                width: 100px; /* Slightly smaller on mobile */
+                height: 100px;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100 p-4 sm:p-8">
@@ -100,7 +112,7 @@ MLS#: N8305544</textarea>
             </div>
         </header>
 
-        <div class="relative bg-image-section bg-gray-300" style="background-image: url('https://cdn.realtor.ca/listing/TS638800727233100000/reb82/highres/3/w12079673_1.jpg');" id="bgImageSection">
+        <div class="relative bg-image-section bg-gray-300" style="background-image: url('https://raw.githubusercontent.com/Rogerlaulau/realtor-poster-generator/refs/heads/main/sample-background.jpg');" id="bgImageSection">
             <div class="absolute inset-0 bg-black bg-opacity-10"></div>
 
             <div class="relative z-10 md:flex flex-col md:flex-row min-h-[350px] sm:min-h-[400px] md:min-h-[450px] lg:min-h-[500px]">
@@ -133,33 +145,31 @@ MLS#: N8305544</textarea>
             </p>
         </section>
 
-        <footer class="p-6 sm:p-8 bg-gray-50 border-t">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-6 sm:space-y-0 sm:space-x-6">
-                <div class="flex-shrink-0">
-                    <img src="./logo.png" alt="Broker Logo" class="w-20 h-20 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/666666?text=Logo';">
-                </div>
+<footer class="p-6 sm:p-8 bg-gray-50 border-t">
+    <div class="flex flex-col sm:flex-row items-center sm:items-start justify-center sm:justify-between space-y-10 sm:space-y-0 sm:space-x-6">
+        <div class="flex-shrink-0">
+            <img src="https://raw.githubusercontent.com/Rogerlaulau/realtor-poster-generator/refs/heads/main/logo.png" alt="Broker Logo" class="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-contain" onerror="this.onerror=null;this.src='https://placehold.co/120x120/ccc/666?text=Logo';">
+        </div>
 
-                <div class="flex-grow">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center">
-                        <img src="./agent-photo.jpg" alt="Agent Photo" class="w-20 h-20 rounded-full object-cover mr-0 mb-4 sm:mr-4 sm:mb-0" onerror="this.onerror=null;this.src='https://placehold.co/80x80/cccccc/666666?text=Photo';">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-800">Kelly Jiang</h3>
-                            <p class="text-sm text-gray-600">Salesperson</p>
-                            <p class="text-xs text-gray-500">FRI.SRS.ABR.MCNE</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-sm text-gray-600 space-y-1 text-left sm:text-right">
+        <div class="flex-grow flex items-center justify-center">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center">
+                <img src="https://raw.githubusercontent.com/Rogerlaulau/realtor-poster-generator/refs/heads/main/agent-photo.png" alt="Agent Photo" class="agent-photo rounded-full object-cover mr-0 mb-4 sm:mr-4 sm:mb-0" onerror="this.onerror=null;this.src='https://placehold.co/120x120/ccc/666?text=Photo';">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">Kelly Jiang</h3>
+                    <p class="text-sm text-gray-600">Salesperson</p>
                     <p class="font-semibold text-lg text-gray-800">647 618 7222</p>
                     <p>kellyjiang29@gmail.com</p>
-                    <p>http://kellyjiang.web.baystreetgroup.ca</p>
-                    <div class="flex justify-start sm:justify-end mt-2">
-                        <img src="qr-code.jpg" alt="QR Code" class="w-[100px] h-[100px] rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/666666?text=QR+Error';">
-                    </div>
                 </div>
             </div>
-        </footer>
+        </div>
+
+        <div class="text-sm text-gray-800 space-y-1 text-left sm:text-right">
+            <div class="flex justify-start sm:justify-end mt-2">
+                <img src="https://raw.githubusercontent.com/Rogerlaulau/realtor-poster-generator/refs/heads/main/qr-code.jpg" alt="QR Code" class="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/120x120/ccc/666?text=QR+Error';">
+            </div>
+        </div>
+    </div>
+</footer>
     </div>
 
     <div id="messageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
@@ -276,6 +286,7 @@ MLS#: N8305544</textarea>
             posterMainAddress.textContent = mainAddressInput.value;
             posterSubAddress.textContent = subAddressInput.value;
             posterRent.textContent = rentInput.value;
+            posterListingLabel.textContent = listingLabelInput.value;
             propertyFeaturesDisplay.textContent = propertyFeaturesInput.value;
 
             // Trigger input event for propertyInfoInput to parse initial content
